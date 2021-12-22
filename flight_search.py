@@ -1,6 +1,7 @@
 import os
 import requests
 from datetime import datetime, timedelta
+from pprint import pprint
 
 TEQUILA_API_KEY = os.environ["TEQUILA_API_KEY"]
 TEQUILA_ENDPOINT = "https://tequila-api.kiwi.com"
@@ -46,5 +47,11 @@ class FlightSearch:
             data = r.json()["data"][0]
         except IndexError:
             print(f"No flights found for {destination}.")
-            return None
+            try:
+                params["max_stopovers"] = 1
+                r = requests.get(endpoint, params=params, headers=headers)
+                data = r.json()["data"][0]
+                pprint(data)
+            except IndexError:
+                return
         return data
